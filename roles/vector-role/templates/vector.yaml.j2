@@ -1,0 +1,11 @@
+sources:
+  dummy:
+    type: "demo_logs"
+    format: "json"
+sinks:
+  out:
+    type: "console"
+    inputs:
+      - "dummy"
+    encoding:
+      codec: "json"

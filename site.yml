@@ -1,0 +1,20 @@
+---
+- name: Install and configure Clickhouse
+  hosts: clickhouse
+  become: true
+  vars:
+    clickhouse_repo_key: "https://packages.clickhouse.com/rpm/stable/repodata/repomd.xml.key"
+  roles:
+    - clickhouse
+
+- name: Install and configure Vector
+  hosts: vector
+  become: true
+  roles:
+    - vector-role
+
+- name: Install and configure Lighthouse
+  hosts: lighthouse
+  become: true
+  roles:
+    - lighthouse-role

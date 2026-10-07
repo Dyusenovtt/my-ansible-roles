@@ -1,0 +1,32 @@
+---
+# tasks file for lighthouse-role
+- name: Install Nginx and Git
+  become: true
+  ansible.builtin.apt:
+    name:
+      - nginx
+      - git
+    state: present
+    update_cache: true
+
+- name: Clone Lighthouse repository
+  become: true
+  ansible.builtin.git:
+    repo: '{{ lighthouse_repo_url }}'
+    dest: /var/www/html/lighthouse
+    version: master
+
+- name: Configure Nginx for Lighthouse
+  become: true
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/default
+    mode: '0644'
+  notify: Restart Nginx
+
+- name: Ensure Nginx is running
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

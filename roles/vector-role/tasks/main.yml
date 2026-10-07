@@ -1,0 +1,31 @@
+---
+# tasks file for vector-role
+- name: Create Vector config directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/vector
+    state: directory
+    mode: '0755'
+
+- name: Download Vector archive
+  ansible.builtin.get_url:
+    url: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-x86_64-unknown-linux-gnu.tar.gz"
+    dest: "/tmp/vector.tar.gz"
+    mode: '0644'
+
+- name: Extract Vector
+  become: true
+  ansible.builtin.unarchive:
+    src: "/tmp/vector.tar.gz"
+    dest: "/usr/local/bin"
+    remote_src: true
+    extra_opts:
+      - --strip-components=2
+
+- name: Configure Vector
+  become: true
+  ansible.builtin.template:
+    src: vector.yaml.j2
+    dest: /etc/vector/vector.yaml
+    mode: '0644'
+  notify: Restart Vector
